@@ -25,4 +25,18 @@
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Data\Migrations\" />
+      <Folder Include="Endpoints\Auth\Requests\" />
+      <Folder Include="Endpoints\Auth\Responses\" />
+      <Folder Include="Endpoints\Categories\Responses\" />
+      <Folder Include="Endpoints\Platforms\Responses\" />
+      <Folder Include="Endpoints\SearchLogs\Requests\" />
+      <Folder Include="Endpoints\SearchLogs\Responses\" />
+      <Folder Include="Endpoints\Users\Requests\" />
+      <Folder Include="Endpoints\Users\Responses\" />
+      <Folder Include="Endpoints\Valuates\Responses\" />
+      <Folder Include="Services\" />
+    </ItemGroup>
+
 </Project>
