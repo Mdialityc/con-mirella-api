@@ -20,18 +20,6 @@ public class AppDbContext: DbContext
     {
         base.OnModelCreating(modelBuilder);
         
-        // Group
-        modelBuilder.Entity<Platform>()
-            .HasMany<Group>()
-            .WithOne()
-            .HasForeignKey(e => e.PlatformId)
-            .IsRequired();
-        modelBuilder.Entity<Category>()
-            .HasMany<Group>()
-            .WithOne()
-            .HasForeignKey(e => e.CategoryId)
-            .IsRequired();
-        
         // Valuate
         modelBuilder.Entity<Group>()
             .HasMany<Valuate>()

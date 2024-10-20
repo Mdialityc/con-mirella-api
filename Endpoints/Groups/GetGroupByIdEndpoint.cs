@@ -29,7 +29,11 @@ public class
     public override async Task<Results<Ok<GroupResponse>, NotFound, ProblemDetails>> ExecuteAsync(
         GetGroupByIdRequest req, CancellationToken ct)
     {
-        var group = await _dbContext.Groups.FindAsync(req.Id, ct);
+        var group = await _dbContext.Groups
+            .Include(group => group.Category)
+            .Include(group => group.Platform)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == req.Id, ct);
 
         if (group is null)
             return TypedResults.NotFound();
@@ -46,10 +50,8 @@ public class
             Description = group.Description,
             Link = group.Link,
             ImageOG = group.ImageOG,
-            Category = _dbContext.Categories.AsNoTracking().FirstOrDefault(y => y.Id == group.CategoryId)?.Name ??
-                       string.Empty,
-            Platform = _dbContext.Platforms.AsNoTracking().FirstOrDefault(y => y.Id == group.PlatformId)?.Name ??
-                       string.Empty,
+            Category = group.Category.Name,
+            Platform =group.Platform.Name,
             FiveStarsAmount =
                 valuates.Count(y => y.Punctuation == ValuatePunctuation.FIVE_STARS),
             FourStarsAmount =

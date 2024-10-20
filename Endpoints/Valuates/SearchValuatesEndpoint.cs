@@ -25,37 +25,41 @@ public class SearchValuatesEndpoint : Endpoint<SearchValuatesRequest, Results<Ok
 
     public override async Task<Results<Ok<PaginatedResponse<Valuate>>, ProblemDetails>> ExecuteAsync(SearchValuatesRequest req, CancellationToken ct)
     {
-        var valuates = _dbContext.Valuates.AsNoTracking();
+        var query = _dbContext.Valuates.AsNoTracking().AsQueryable();
         
         // Filtering Section
         if (req.Ids?.Any() ?? false)
         {
-            valuates = valuates.Where(x => req.Ids.Contains(x.Id));
+            query = query.Where(x => req.Ids.Contains(x.Id));
         }
 
         if (req.GroupIds?.Any() ?? false)
         {
-            valuates = valuates.Where(x => req.GroupIds.Contains(x.GroupId));
+            query = query.Where(x => req.GroupIds.Contains(x.GroupId));
         }
 
         if (req.Ips?.Any() ?? false)
         {
-            valuates = valuates.Where(x => req.Ips.Contains(x.IP));
+            query = query.Where(x => req.Ips.Contains(x.IP));
         }
 
         if (req.Punctuation is not null)
         {
-            valuates = valuates.Where(x => x.Punctuation == req.Punctuation);
+            query = query.Where(x => x.Punctuation == req.Punctuation);
         }
 
-        var valuateList = (await valuates.ToListAsync(cancellationToken: ct)).AsEnumerable();
+        var valuateList = (await query.ToListAsync(cancellationToken: ct)).AsEnumerable();
         
-        // Ordering Section
+        // Sorting Section
         if (!string.IsNullOrEmpty(req.SortBy))
         {
-            valuateList = req?.IsDescending ?? false
-                ? valuateList.OrderByDescending(s => EF.Property<object>(s, req.SortBy))
-                : valuateList.OrderBy(s => EF.Property<object>(s, req.SortBy));
+            var propertyInfo = typeof(Valuate).GetProperty(req.SortBy);
+            if (propertyInfo != null)
+            {
+                valuateList = req?.IsDescending ?? false
+                    ? valuateList.OrderByDescending(s => propertyInfo.GetValue(s))
+                    : valuateList.OrderBy(s => propertyInfo.GetValue(s));
+            }
         }
         
         // Pagination Section
