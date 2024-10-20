@@ -3,6 +3,7 @@ using System;
 using ConMirellaApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ConMirellaApi.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241020014241_Group Navigation Rel")]
+    partial class GroupNavigationRel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,6 +53,9 @@ namespace ConMirellaApi.Data.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("CategoryId1")
+                        .HasColumnType("integer");
+
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -74,6 +80,9 @@ namespace ConMirellaApi.Data.Migrations
                     b.Property<int>("PlatformId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("PlatformId1")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -84,7 +93,11 @@ namespace ConMirellaApi.Data.Migrations
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("CategoryId1");
+
                     b.HasIndex("PlatformId");
+
+                    b.HasIndex("PlatformId1");
 
                     b.ToTable("Groups");
                 });
@@ -196,15 +209,27 @@ namespace ConMirellaApi.Data.Migrations
 
             modelBuilder.Entity("ConMirellaApi.Data.Models.Group", b =>
                 {
-                    b.HasOne("ConMirellaApi.Data.Models.Category", "Category")
+                    b.HasOne("ConMirellaApi.Data.Models.Category", null)
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ConMirellaApi.Data.Models.Platform", "Platform")
+                    b.HasOne("ConMirellaApi.Data.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ConMirellaApi.Data.Models.Platform", null)
                         .WithMany()
                         .HasForeignKey("PlatformId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ConMirellaApi.Data.Models.Platform", "Platform")
+                        .WithMany()
+                        .HasForeignKey("PlatformId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
